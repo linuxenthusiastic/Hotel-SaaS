@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 
+import hotelServiceRoutes from './src/routes/HotelService.routes.js'
+
 dotenv.config()
 
 const app = express()
@@ -9,6 +11,8 @@ const PORT = process.env.PORT || 3000
 
 app.use(cors())
 app.use(express.json())
+
+app.use('/api/hotel-services', hotelServiceRoutes)
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'Servidor corriendo' })
