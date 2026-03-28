@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Base de datos (cada quien genera la suya)
+database/hotel.db
+database/hotel.db-journal
+database/*.db-shm
+database/*.db-wal
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operativo (Windows)
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
