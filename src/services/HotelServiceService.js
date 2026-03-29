@@ -12,7 +12,6 @@ getByCategory(category) {
     }
     return HotelServiceRepository.findByCategory(category)
     }
-
 }
 
 export default new HotelServiceService()
