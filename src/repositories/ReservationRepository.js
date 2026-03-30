@@ -62,6 +62,22 @@ class ReservationRepository {
         stmt.run({ id, status, penaltyAmount })
         return this.findById(id)
     }
+
+    findByGuestId(guestId) {
+        const stmt = db.prepare(`
+        SELECT r.*,
+                g.full_name as guest_name,
+                ro.number   as room_number,
+                ro.type     as room_type
+        FROM reservations r
+        JOIN guests g  ON r.guest_id = g.id
+        JOIN rooms  ro ON r.room_id  = ro.id
+        WHERE r.guest_id = ?
+        AND r.status IN ('CONFIRMED', 'CHECKED_IN')
+        ORDER BY r.check_in_date ASC
+        `)
+        return stmt.all(guestId)
+    }
 }
 
 export default new ReservationRepository();

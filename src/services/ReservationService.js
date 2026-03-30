@@ -64,6 +64,13 @@ class ReservationService {
     return ReservationRepository.updateStatus(id, 'CANCELLED', penalty)
     }
 
+    findByGuestId(guestId){
+        const reservation = ReservationRepository.findByGuestId(guestId);
+        if(!reservation || reservation.length === 0) {
+            throw new Error(`Reserva relacionada a ${guestId} no encontrada`);
+        }
+        return reservation;
+    }
 }
 
 export default new ReservationService()
