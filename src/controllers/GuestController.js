@@ -21,11 +21,19 @@ class GuestController {
     
     create(req, res) {
         try {
-        console.log('REQ.BODY:', req.body)
         const guest = GuestService.create(req.body)
         res.status(201).json(guest)
         } catch (error) {
         res.status(400).json({ error: error.message })
+        }
+    }
+
+    getByDocument(req,res){
+        try{
+            const guest = GuestService.findByDocument(req.params.document)
+            res.json(guest)
+        } catch(error) {
+            res.status(404).json({ error: error.message });
         }
     }
 }

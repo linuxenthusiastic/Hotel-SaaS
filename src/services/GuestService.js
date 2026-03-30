@@ -15,6 +15,17 @@ class GuestService {
         return guest;
     }
 
+    findByDocument(document){
+        const guest = GuestRepository.findByDocument(document);
+
+        if(!guest){
+            throw new Error(`El huesped con documento ${document} no ha sido encontrado`);
+        }
+
+        return guest;
+    }
+
+    
     create(data){
         const guest = GuestFactory.create(data);
 

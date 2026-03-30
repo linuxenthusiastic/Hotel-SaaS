@@ -4,6 +4,7 @@ class HotelServiceController {
 
 getAll(req, res) {
     try {
+    console.log(res);
     const services = HotelServiceService.getAll()
     res.json(services)
     } catch (error) {

@@ -6,7 +6,7 @@ class RoomRepository {
         return query.all()
     }
 
-    findById(){
+    findById(id){
         const query = db.prepare('SELECT * FROM rooms WHERE id = ? AND is_active = 1')
         return query.get(id)
     }
