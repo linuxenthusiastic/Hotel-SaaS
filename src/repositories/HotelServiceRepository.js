@@ -8,12 +8,12 @@ class HotelServiceRepository {
         return query.all();
     }
 
-    findByCategory() {
+    findByCategory(category) {
         const query = db.prepare(`
-        SELECT * FROM hotel_services WHERE category = ? AND avaliable = 1
+        SELECT * FROM hotel_services WHERE category = ? AND available  = 1
             `)
 
-        return query.all();
+        return query.all(category);
     }
 }
 

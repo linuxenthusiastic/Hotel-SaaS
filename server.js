@@ -7,7 +7,7 @@ import reservationRoutes from './src/routes/Reservation.routes.js'
 import checkinRoutes     from './src/routes/Checkin.routes.js'
 import checkoutRoutes    from './src/routes/Checkout.routes.js'
 import hotelServiceRoutes from './src/routes/HotelService.routes.js'
-
+import roomRoutes from './src/routes/Room.routes.js'
 dotenv.config()
 
 const app = express()
@@ -21,6 +21,7 @@ app.use('/api/reservations',   reservationRoutes)
 app.use('/api/checkin',        checkinRoutes)
 app.use('/api/checkout',       checkoutRoutes)
 app.use('/api/hotel-services', hotelServiceRoutes)
+app.use('/api/rooms', roomRoutes)
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'Servidor corriendo' })
