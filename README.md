@@ -58,6 +58,7 @@ Cada capa tiene una única responsabilidad:
 - **Repository** — ejecuta las queries SQL
 
 ### C1 — Contexto del sistema
+![image](https://github.com/linuxenthusiastic/Hotel-SaaS/blob/main/c4-diagram/C1-CONTEXT.png)
 El sistema tiene un único actor (recepcionista) que interactúa con el sistema de reservas. No hay integraciones externas.
 
 ### C2 — Contenedores
