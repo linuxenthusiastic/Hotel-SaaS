@@ -70,6 +70,7 @@ El sistema tiene un único actor (recepcionista) que interactúa con el sistema 
 | Base de datos | SQLite | Archivo hotel.db con 5 tablas |
 
 ### C3 — Componentes del backend
+[image](https://github.com/linuxenthusiastic/Hotel-SaaS/blob/main/c4-diagram/C3-COMPONENTES.png)
 ```
 controllers/    → GuestController, ReservationController, CheckinController,
                   CheckoutController, RoomController, HotelServiceController
