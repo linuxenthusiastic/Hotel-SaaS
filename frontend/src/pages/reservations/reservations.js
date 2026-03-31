@@ -10,11 +10,29 @@ export async function renderReservations(container) {
       <button class="primary" id="r-search-guest" style="margin-bottom:10px">Buscar huesped</button>
       <p id="r-guest-info" style="font-size:13px;margin-bottom:10px"></p>
       <input type="hidden" id="r-guest-id" />
+
+      <select id="r-type">
+        <option value="">Seleccionar tipo de habitacion...</option>
+      </select>
+
+      <div id="r-type-info" style="
+        display:none;
+        background:#f0fff4;
+        border:1px solid #9ae6b4;
+        border-radius:8px;
+        padding:12px;
+        margin-bottom:10px;
+        font-size:13px;
+        color:#276749;
+      "></div>
+
       <input type="date" id="r-checkin" />
       <input type="date" id="r-checkout" />
+
       <select id="r-room">
-        <option value="">Seleccionar habitacion...</option>
+        <option value="">Selecciona tipo y fechas primero...</option>
       </select>
+
       <button class="primary" id="r-save">Crear reserva</button>
       <p id="r-msg"></p>
     </div>
@@ -35,17 +53,62 @@ export async function renderReservations(container) {
   document.getElementById('r-checkin').min  = today
   document.getElementById('r-checkout').min = today
 
+  // Carga los tipos de habitacion desde el Strategy
+  async function loadTypes() {
+    try {
+      const types  = await api.get('/rooms/types')
+      const select = document.getElementById('r-type')
+      types.forEach(t => {
+        const opt = document.createElement('option')
+        opt.value       = t
+        opt.textContent = t
+        select.appendChild(opt)
+      })
+    } catch (error) {
+      console.error('Error cargando tipos:', error.message)
+    }
+  }
+
+  // Cuando el recepcionista elige un tipo muestra las caracteristicas
+  document.getElementById('r-type').addEventListener('change', async (e) => {
+    const type     = e.target.value
+    const infoBox  = document.getElementById('r-type-info')
+    const select   = document.getElementById('r-room')
+
+    if (!type) {
+      infoBox.style.display = 'none'
+      select.innerHTML = '<option value="">Selecciona tipo y fechas primero...</option>'
+      return
+    }
+
+    try {
+      const info = await api.get(`/rooms/strategy?type=${type}`)
+      infoBox.style.display = 'block'
+      infoBox.innerHTML = `
+        <strong>${info.type}</strong> —
+        Capacidad: ${info.capacity} persona(s) |
+        ${info.description} |
+        Precio base: $${info.basePrice}/noche
+      `
+    } catch (error) {
+      infoBox.style.display = 'none'
+    }
+
+    loadRooms()
+  })
+
   async function loadRooms() {
     const checkIn  = document.getElementById('r-checkin').value
     const checkOut = document.getElementById('r-checkout').value
+    const type     = document.getElementById('r-type').value
     const select   = document.getElementById('r-room')
 
-    if (!checkIn || !checkOut) return
+    if (!checkIn || !checkOut || !type) return
 
     select.innerHTML = '<option value="">Cargando habitaciones...</option>'
 
     try {
-      const rooms = await api.get(`/rooms/available?checkIn=${checkIn}&checkOut=${checkOut}`)
+      const rooms = await api.get(`/rooms/available?checkIn=${checkIn}&checkOut=${checkOut}&type=${type}`)
       select.innerHTML = '<option value="">Seleccionar habitacion...</option>'
       rooms.forEach(r => {
         const opt = document.createElement('option')
@@ -89,22 +152,20 @@ export async function renderReservations(container) {
     const guestId = document.getElementById('r-guest-id').value
     const roomId  = document.getElementById('r-room').value
     const checkIn = document.getElementById('r-checkin').value
-    const checkOut= document.getElementById('r-checkout').value
+    const checkOut = document.getElementById('r-checkout').value
+    const type    = document.getElementById('r-type').value
 
     if (!guestId) {
-      msg.className = 'error'
-      msg.textContent = 'Busca un huesped primero'
-      return
+      msg.className = 'error'; msg.textContent = 'Busca un huesped primero'; return
+    }
+    if (!type) {
+      msg.className = 'error'; msg.textContent = 'Selecciona un tipo de habitacion'; return
     }
     if (!checkIn || !checkOut) {
-      msg.className = 'error'
-      msg.textContent = 'Las fechas son obligatorias'
-      return
+      msg.className = 'error'; msg.textContent = 'Las fechas son obligatorias'; return
     }
     if (!roomId) {
-      msg.className = 'error'
-      msg.textContent = 'Selecciona una habitacion'
-      return
+      msg.className = 'error'; msg.textContent = 'Selecciona una habitacion'; return
     }
 
     btn.disabled    = true
@@ -122,7 +183,9 @@ export async function renderReservations(container) {
       document.getElementById('r-doc').value             = ''
       document.getElementById('r-guest-id').value        = ''
       document.getElementById('r-guest-info').textContent = ''
-      document.getElementById('r-room').innerHTML        = '<option value="">Seleccionar habitacion...</option>'
+      document.getElementById('r-type').selectedIndex   = 0
+      document.getElementById('r-type-info').style.display = 'none'
+      document.getElementById('r-room').innerHTML        = '<option value="">Selecciona tipo y fechas primero...</option>'
       document.getElementById('r-checkin').value         = ''
       document.getElementById('r-checkout').value        = ''
       await loadAll()
@@ -167,6 +230,7 @@ export async function renderReservations(container) {
           <tr>
             <th>Huesped</th>
             <th>Habitacion</th>
+            <th>Tipo</th>
             <th>Check-in</th>
             <th>Check-out</th>
             <th>Total</th>
@@ -178,7 +242,8 @@ export async function renderReservations(container) {
           ${page.map(r => `
             <tr>
               <td>${r.guest_name}</td>
-              <td>${r.room_number} - ${r.room_type}</td>
+              <td>${r.room_number}</td>
+              <td>${r.room_type}</td>
               <td>${r.check_in_date}</td>
               <td>${r.check_out_date}</td>
               <td>$${r.total_amount}</td>
@@ -228,5 +293,6 @@ export async function renderReservations(container) {
     render()
   })
 
+  loadTypes()
   loadAll()
 }
