@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import HotelServiceController from '../controllers/HotelServiceController.js'
+import { hotelServiceController } from '../config/container.js'
 
 const router = Router()
 
-router.get('/',              (req, res) => HotelServiceController.getAll(req, res))
-router.get('/:category',     (req, res) => HotelServiceController.getByCategory(req, res))
+router.get('/',              (req, res) => hotelServiceController.getAll(req, res))
+router.get('/:category',     (req, res) => hotelServiceController.getByCategory(req, res))
 
-export default router
+export default router;

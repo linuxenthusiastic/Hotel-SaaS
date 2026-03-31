@@ -1,26 +1,20 @@
-import CheckinRepository from '../repositories/CheckinRepository.js'
-import ReservationRepository from '../repositories/ReservationRepository.js'
+import { getReservationState } from '../models/ReservationState.js'
 
 class CheckinService {
+    constructor(CheckinRepository,ReservationRepository){
+        this.CheckinRepository = CheckinRepository;
+        this.ReservationRepository = ReservationRepository;
+    }
     checkin(reservationId){
-        const reservation = ReservationRepository.findById(reservationId)
+        const reservation = this.ReservationRepository.findById(reservationId);
+        if(!reservation) throw new Error("No existe la reservacion");
 
-        if(!reservation){
-            throw new Error("No existe reserva con este id");
-        }
+        const state = getReservationState(reservation.status);
+        state.checkin();
 
-        if(reservation.status !== 'CONFIRMED'){
-            throw new Error(`No se puede hacer check-in de una reserva en estado ${reservation.status}`)
-        }
-
-        const existing = CheckinRepository.findByReservationId(reservationId)
-        if (existing) {
-            throw new Error('Esta reserva ya tiene un check-in registrado')
-        }
-
-        CheckinRepository.saveCheckin(reservationId)
-        return ReservationRepository.updateStatus(reservationId, 'CHECKED_IN')
+        this.CheckinRepository.saveCheckin(reservationId);
+        return this.ReservationRepository.updateStatus(reservationId,'CHECKED_IN')
     }
 }
 
-export default new CheckinService()
+export default CheckinService;

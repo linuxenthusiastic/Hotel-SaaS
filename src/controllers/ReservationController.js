@@ -1,9 +1,10 @@
-import ReservationService from '../services/ReservationService.js'
-
 class ReservationController {
+    constructor(ReservationService){
+        this.ReservationService = ReservationService;
+    }
     getAll(req, res) {
     try {
-        const reservations = ReservationService.getAll()
+        const reservations = this.ReservationService.getAll()
         res.json(reservations)
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -12,7 +13,7 @@ class ReservationController {
 
     getActive(req, res) {
         try {
-            const reservations = ReservationService.getActive()
+            const reservations = this.ReservationService.getActive()
             res.json(reservations)
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -21,7 +22,7 @@ class ReservationController {
 
     getById(req, res) {
     try {
-        const reservation = ReservationService.getById(Number(req.params.id))
+        const reservation = this.ReservationService.getById(Number(req.params.id))
         res.json(reservation)
     } catch (error) {
         res.status(404).json({ error: error.message })
@@ -30,7 +31,7 @@ class ReservationController {
 
     create(req, res) {
     try {
-        const reservation = ReservationService.create(req.body)
+        const reservation = this.ReservationService.create(req.body)
         res.status(201).json(reservation)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -39,7 +40,7 @@ class ReservationController {
 
     cancel(req, res) {
     try {
-        const reservation = ReservationService.cancel(Number(req.params.id))
+        const reservation = this.ReservationService.cancel(Number(req.params.id))
         res.json(reservation)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -48,7 +49,7 @@ class ReservationController {
 
     findByGuestId(req,res){
         try {
-            const reservation = ReservationService.findByGuestId(Number(req.params.guest_id))
+            const reservation = this.ReservationService.findByGuestId(Number(req.params.guest_id))
             res.json(reservation)
         } catch(error){
             res.status(400).json({error: error.message});
@@ -61,7 +62,7 @@ class ReservationController {
             if(!checkIn && checkOut){
                 return res.status(400).json({ error: 'Las fechas son obligatorias' }) 
             }
-            const rooms = RoomService.availableRooms(checkIn,checkOut)
+            const rooms = this.RoomService.availableRooms(checkIn,checkOut)
             res.json(rooms)
         } catch(error) {
             res.status(400).json({ error: error.message })
@@ -69,4 +70,4 @@ class ReservationController {
     }
 }
 
-export default new ReservationController()
+export default ReservationController;

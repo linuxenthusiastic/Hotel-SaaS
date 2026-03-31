@@ -1,10 +1,11 @@
-import CheckoutService from '../services/CheckoutService.js'
-
 class CheckoutController {
+    constructor(CheckoutService){
+        this.CheckoutService = CheckoutService;
+    }
     checkout(req, res) {
         try {
             const notes = req.body?.notes || ''
-            const result = CheckoutService.checkout(Number(req.params.reservationId), notes)
+            const result = this.CheckoutService.checkout(Number(req.params.reservationId), notes)
             res.json(result)
         } catch (error) {
             res.status(400).json({ error: error.message })
@@ -12,4 +13,4 @@ class CheckoutController {
     }
 }
 
-export default new CheckoutController()
+export default CheckoutController;

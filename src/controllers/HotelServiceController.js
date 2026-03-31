@@ -1,25 +1,25 @@
-import HotelServiceService from '../services/HotelServiceService.js'
-
 class HotelServiceController {
-
-getAll(req, res) {
-    try {
-    console.log(res);
-    const services = HotelServiceService.getAll()
-    res.json(services)
-    } catch (error) {
-    res.status(500).json({ error: error.message })
+    constructor(HotelServiceService){
+        this.HotelServiceService = HotelServiceService;
     }
-}
-
-getByCategory(req, res) {
-    try {
-    const services = HotelServiceService.getByCategory(req.params.category)
-    res.json(services)
-    } catch (error) {
-    res.status(400).json({ error: error.message })
+    getAll(req, res) {
+        try {
+        console.log(res);
+        const services = this.HotelServiceService.getAll()
+        res.json(services)
+        } catch (error) {
+        res.status(500).json({ error: error.message })
         }
     }
+
+    getByCategory(req, res) {
+        try {
+        const services = this.HotelServiceService.getByCategory(req.params.category)
+        res.json(services)
+        } catch (error) {
+        res.status(400).json({ error: error.message })
+            }
+        }
 }
 
-export default new HotelServiceController()
+export default HotelServiceController;

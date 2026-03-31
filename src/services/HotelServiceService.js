@@ -1,17 +1,17 @@
-import HotelServiceRepository from '../repositories/HotelServiceRepository.js'
-
 class HotelServiceService {
-
-getAll() {
-    return HotelServiceRepository.findAll()
-}
-
-getByCategory(category) {
-    if (!category) {
-    throw new Error('La categoría es obligatoria')
+    constructor(HotelServiceRepository){
+        this.HotelServiceRepository = HotelServiceRepository
     }
-    return HotelServiceRepository.findByCategory(category)
+    getAll() {
+    return this.HotelServiceRepository.findAll()
     }
-}
 
-export default new HotelServiceService()
+    getByCategory(category) {
+        if (!category) {
+        throw new Error('La categoría es obligatoria')
+        }
+        return this.HotelServiceRepository.findByCategory(category)
+        }
+    }
+
+export default HotelServiceService;

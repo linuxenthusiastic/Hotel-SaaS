@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import RoomController from '../controllers/RoomController.js'
+import { roomController} from '../config/container.js'
 
 const router = Router()
 
-router.get('/available',(req, res) => RoomController.availableRooms(req, res))
+router.get('/available',(req, res) => roomController.availableRooms(req, res))
 
-export default router
+export default router;

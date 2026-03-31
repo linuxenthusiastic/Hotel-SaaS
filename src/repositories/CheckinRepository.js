@@ -1,16 +1,16 @@
-import db from '../config/database.js'
-
 class CheckinRepository {
-
+  constructor(db){
+    this.db = db
+  }
   findByReservationId(reservationId) {
-    const stmt = db.prepare(`
+    const stmt = this.db.prepare(`
       SELECT * FROM checkin_checkout WHERE reservation_id = ?
     `)
     return stmt.get(reservationId)
   }
 
   saveCheckin(reservationId) {
-    const stmt = db.prepare(`
+    const stmt = this.db.prepare(`
       INSERT INTO checkin_checkout (reservation_id, actual_checkin)
       VALUES (@reservationId, CURRENT_TIMESTAMP)
     `)
@@ -19,7 +19,7 @@ class CheckinRepository {
   }
 
   saveCheckout(reservationId, lateCheckout, lateFee, notes) {
-    const stmt = db.prepare(`
+    const stmt = this.db.prepare(`
       UPDATE checkin_checkout
       SET actual_checkout = CURRENT_TIMESTAMP,
           late_checkout   = @lateCheckout,
@@ -33,4 +33,4 @@ class CheckinRepository {
 
 }
 
-export default new CheckinRepository()
+export default CheckinRepository;

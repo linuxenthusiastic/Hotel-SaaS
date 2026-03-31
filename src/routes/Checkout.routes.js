@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import CheckoutController from '../controllers/CheckoutController.js'
+import {checkoutController} from '../config/container.js'
 
 const router = Router()
 
-router.patch('/:reservationId', (req, res) => CheckoutController.checkout(req, res))
+router.patch('/:reservationId', (req, res) => checkoutController.checkout(req, res))
 
-export default router
+export default router;

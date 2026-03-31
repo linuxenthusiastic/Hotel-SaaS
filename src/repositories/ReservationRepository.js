@@ -1,8 +1,9 @@
-import db from '../config/database.js';
-
 class ReservationRepository {
+    constructor(db){
+        this.db = db
+    }
     findAll() {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         SELECT r.*, 
                 g.full_name as guest_name,
                 ro.number   as room_number,
@@ -16,7 +17,7 @@ class ReservationRepository {
     }
 
     findById(id) {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         SELECT r.*,
                 g.full_name as guest_name,
                 ro.number   as room_number,
@@ -30,11 +31,12 @@ class ReservationRepository {
     }
     
     findActive() {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         SELECT r.*,
-                g.full_name as guest_name,
-                ro.number   as room_number,
-                ro.type     as room_type
+                g.full_name       as guest_name,
+                g.document_number as guest_document,
+                ro.number         as room_number,
+                ro.type           as room_type
         FROM reservations r
         JOIN guests g  ON r.guest_id = g.id
         JOIN rooms  ro ON r.room_id  = ro.id
@@ -45,7 +47,7 @@ class ReservationRepository {
     }
     
     save(reservation) {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         INSERT INTO reservations (guest_id, room_id, check_in_date, check_out_date, total_amount)
         VALUES (@guest_id, @room_id, @check_in_date, @check_out_date, @total_amount)
         `)
@@ -54,7 +56,7 @@ class ReservationRepository {
     }
     
     updateStatus(id, status, penaltyAmount = 0) {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         UPDATE reservations
         SET status = @status, penalty_amount = @penaltyAmount
         WHERE id = @id
@@ -64,7 +66,7 @@ class ReservationRepository {
     }
 
     findByGuestId(guestId) {
-        const stmt = db.prepare(`
+        const stmt = this.db.prepare(`
         SELECT r.*,
                 g.full_name as guest_name,
                 ro.number   as room_number,
@@ -80,4 +82,4 @@ class ReservationRepository {
     }
 }
 
-export default new ReservationRepository();
+export default ReservationRepository;

@@ -1,15 +1,15 @@
 import { Router } from 'express'
-import ReservationController from '../controllers/ReservationController.js'
+import { reservationController } from '../config/container.js'
+
 
 const router = Router()
 
-router.get('/guest/:guest_id',  (req, res) => ReservationController.findByGuestId(req, res))
-router.get('/',           (req, res) => ReservationController.getAll(req, res))
-router.get('/active',     (req, res) => ReservationController.getActive(req, res))
-router.get('/:id',        (req, res) => ReservationController.getById(req, res))
-router.post('/',          (req, res) => ReservationController.create(req, res))
-router.patch('/:id/cancel', (req, res) => ReservationController.cancel(req, res))
-router.get('/available', (req, res) => RoomController.availableRooms(req, res))
+router.get('/guest/:guest_id',  (req, res) => reservationController.findByGuestId(req, res))
+router.get('/',           (req, res) => reservationController.getAll(req, res))
+router.get('/active',     (req, res) => reservationController.getActive(req, res))
+router.get('/:id',        (req, res) => reservationController.getById(req, res))
+router.post('/',          (req, res) => reservationController.create(req, res))
+router.patch('/:id/cancel', (req, res) => reservationController.cancel(req, res))
 
 
-export default router
+export default router;

@@ -1,15 +1,16 @@
-import db from '../config/database.js';
-
 class HotelServiceRepository {
+    constructor(db){
+        this.db = db
+    }
     findAll(){
-        const query = db.prepare(`
+        const query = this.db.prepare(`
         SELECT * FROM hotel_services WHERE available = 1 ORDER BY category, name
             `)
         return query.all();
     }
 
     findByCategory(category) {
-        const query = db.prepare(`
+        const query = this.db.prepare(`
         SELECT * FROM hotel_services WHERE category = ? AND available  = 1
             `)
 
@@ -17,4 +18,4 @@ class HotelServiceRepository {
     }
 }
 
-export default new HotelServiceRepository();
+export default HotelServiceRepository;

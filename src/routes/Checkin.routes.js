@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import CheckinController from '../controllers/CheckinController.js'
+import {checkinController} from '../config/container.js'
 
 const router = Router()
 
-router.patch('/:reservationId', (req, res) => CheckinController.checkin(req, res))
+router.patch('/:reservationId', (req, res) => checkinController.checkin(req, res))
 
 export default router

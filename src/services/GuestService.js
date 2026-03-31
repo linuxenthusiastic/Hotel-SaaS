@@ -1,12 +1,15 @@
-import GuestRepository from '../repositories/GuestRepository.js'
-import GuestFactory from '../models/GuestFactory.js';
+import GuestFactory from '../models/GuestFactory.js'
+
 class GuestService {
+    constructor(GuestRepository){
+        this.GuestRepository = GuestRepository;
+    }
     findAll(){
-        return GuestRepository.findAll();
+        return this.GuestRepository.findAll();
     }
 
     findById(id){
-        const guest =  GuestRepository.findById(id);
+        const guest =  this.GuestRepository.findById(id);
 
         if(!guest){
             throw new Error(`Huesped con id: ${id} no ha sido encontrado`);
@@ -16,7 +19,7 @@ class GuestService {
     }
 
     findByDocument(document){
-        const guest = GuestRepository.findByDocument(document);
+        const guest = this.GuestRepository.findByDocument(document);
 
         if(!guest){
             throw new Error(`El huesped con documento ${document} no ha sido encontrado`);
@@ -29,12 +32,12 @@ class GuestService {
     create(data){
         const guest = GuestFactory.create(data);
 
-        if(GuestRepository.findByDocument(guest.document_number)){
+        if(this.GuestRepository.findByDocument(guest.document_number)){
             throw new Error(`Ya existe un huésped con el documento ${guest.document_number}`)
         }
 
-        return GuestRepository.save(guest);
+        return this.GuestRepository.save(guest);
     }
 }
 
-export default new GuestService();
+export default GuestService;
