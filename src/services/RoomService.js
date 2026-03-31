@@ -1,3 +1,6 @@
+
+import { getRoomStrategy, roomTypes } from '../models/RoomStrategy.js'
+
 class RoomService {
     constructor(RoomRepository){
         this.RoomRepository = RoomRepository;
@@ -10,6 +13,24 @@ class RoomService {
         }
 
         return rooms;
+    }
+
+    getAll(){
+        return this.RoomRepository.findAll();
+    }
+
+    getRoomTypes(){
+        return roomTypes;
+    }
+
+    applyStrategy(type) {
+        const strategy = getRoomStrategy(type)
+        return {
+            type:        strategy.type,
+            capacity:    strategy.capacity,
+            description: strategy.description,
+            basePrice:   strategy.basePrice,
+        }
     }
 }
 
