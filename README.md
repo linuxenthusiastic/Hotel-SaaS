@@ -62,6 +62,7 @@ Cada capa tiene una única responsabilidad:
 El sistema tiene un único actor (recepcionista) que interactúa con el sistema de reservas. No hay integraciones externas.
 
 ### C2 — Contenedores
+![image](https://github.com/linuxenthusiastic/Hotel-SaaS/blob/main/c4-diagram/C2-CONTENEDORES.png)
 | Contenedor | Tecnología | Descripción |
 |---|---|---|
 | Frontend | Vite + Vanilla JS | SPA con navegación por pestañas |
