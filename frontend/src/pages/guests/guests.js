@@ -1,4 +1,5 @@
-import { api } from '../../api/client.js'
+import { GuestAPI }                    from '../../api/GuestAPI.js'
+import { PaginationMixin, FilterMixin } from '../../utils/mixin.js'
 
 const PAGE_SIZE = 5
 
@@ -20,34 +21,34 @@ export async function renderGuests(container) {
         <div id="g-list">Cargando...</div>
         <div class="pagination" id="g-pagination"></div>
     </div>
-`
+    `
 
-let allGuests   = []
-let currentPage = 1
-let filtered    = []
+    let allGuests   = []
+    let currentPage = 1
+    let filtered    = []
 
-async function loadAll() {
+    async function loadAll() {
     try {
-        allGuests = await api.get('/guests')
+        allGuests = await GuestAPI.getAll()
         filtered  = allGuests
         render()
     } catch (error) {
         document.getElementById('g-list').innerHTML = `<p class="error">${error.message}</p>`
     }
-}
+    }
 
-function render() {
+    function render() {
     const list       = document.getElementById('g-list')
     const pagination = document.getElementById('g-pagination')
+    const total      = PaginationMixin.totalPages(filtered, PAGE_SIZE)
 
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-    if (currentPage > totalPages) currentPage = 1
+    if (currentPage > total) currentPage = 1
 
+    const page = PaginationMixin.paginate(filtered, currentPage, PAGE_SIZE)
     const start = (currentPage - 1) * PAGE_SIZE
-    const page  = filtered.slice(start, start + PAGE_SIZE)
 
     if (filtered.length === 0) {
-        list.innerHTML = '<p>No se encontraron huéspedes.</p>'
+        list.innerHTML   = '<p>No se encontraron huéspedes.</p>'
         pagination.innerHTML = ''
         return
     }
@@ -78,89 +79,65 @@ function render() {
         </p>
     `
 
-    pagination.innerHTML = ''
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button')
-        btn.textContent = i
-        btn.className   = i === currentPage ? 'active' : ''
-        btn.addEventListener('click', () => { currentPage = i; render() })
-        pagination.appendChild(btn)
-    }
+    PaginationMixin.renderPagination(pagination, currentPage, total, (page) => {
+        currentPage = page
+        render()
+    })
     }
 
     document.getElementById('g-search').addEventListener('input', (e) => {
-    const query = e.target.value.trim()
-    filtered    = allGuests.filter(g => g.document_number.includes(query))
+    filtered    = FilterMixin.filterByDocument(allGuests, e.target.value.trim())
     currentPage = 1
     render()
     })
 
     document.getElementById('g-save').addEventListener('click', async () => {
-        const msg = document.getElementById('g-msg')
-        const btn = document.getElementById('g-save')
-      
-        const name  = document.getElementById('g-name').value.trim()
-        const doc   = document.getElementById('g-doc').value.trim()
-        const email = document.getElementById('g-email').value.trim()
-        const phone = document.getElementById('g-phone').value.trim()
-      
-        // Validaciones frontend
-        if (!name) {
-          msg.className = 'error'
-          msg.textContent = 'El nombre es obligatorio'
-          return
-        }
-      
-        if (!/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(name)) {
-          msg.className = 'error'
-          msg.textContent = 'El nombre solo puede contener letras'
-          return
-        }
-      
-        if (!doc) {
-          msg.className = 'error'
-          msg.textContent = 'El documento es obligatorio'
-          return
-        }
-      
-        if (!/^\d+$/.test(doc)) {
-          msg.className = 'error'
-          msg.textContent = 'El documento solo puede contener números positivos'
-          return
-        }
-      
-        if (phone && !/^\d+$/.test(phone)) {
-          msg.className = 'error'
-          msg.textContent = 'El teléfono solo puede contener números'
-          return
-        }
-      
-        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          msg.className = 'error'
-          msg.textContent = 'El email no tiene un formato válido'
-          return
-        }
-      
-        btn.disabled    = true
-        btn.textContent = 'Registrando...'
-      
-        try {
-          await api.post('/guests', { full_name: name, document_number: doc, email, phone })
-          msg.className   = 'success-msg'
-          msg.textContent = 'Huésped registrado correctamente'
-          document.getElementById('g-name').value  = ''
-          document.getElementById('g-doc').value   = ''
-          document.getElementById('g-email').value = ''
-          document.getElementById('g-phone').value = ''
-          await loadAll()
-        } catch (error) {
-          msg.className   = 'error'
-          msg.textContent = error.message
-        } finally {
-          btn.disabled    = false
-          btn.textContent = 'Registrar'
-        }
-      })
+    const msg   = document.getElementById('g-msg')
+    const btn   = document.getElementById('g-save')
+    const name  = document.getElementById('g-name').value.trim()
+    const doc   = document.getElementById('g-doc').value.trim()
+    const email = document.getElementById('g-email').value.trim()
+    const phone = document.getElementById('g-phone').value.trim()
+
+    if (!name) {
+        msg.className = 'error'; msg.textContent = 'El nombre es obligatorio'; return
+    }
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(name)) {
+        msg.className = 'error'; msg.textContent = 'El nombre solo puede contener letras'; return
+    }
+    if (!doc) {
+        msg.className = 'error'; msg.textContent = 'El documento es obligatorio'; return
+    }
+    if (!/^\d+$/.test(doc)) {
+        msg.className = 'error'; msg.textContent = 'El documento solo puede contener números'; return
+    }
+    if (phone && !/^\d+$/.test(phone)) {
+        msg.className = 'error'; msg.textContent = 'El teléfono solo puede contener números'; return
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.className = 'error'; msg.textContent = 'El email no tiene formato válido'; return
+    }
+
+    btn.disabled    = true
+    btn.textContent = 'Registrando...'
+
+    try {
+        await GuestAPI.create({ full_name: name, document_number: doc, email, phone })
+        msg.className   = 'success-msg'
+        msg.textContent = 'Huésped registrado correctamente'
+        document.getElementById('g-name').value  = ''
+        document.getElementById('g-doc').value   = ''
+        document.getElementById('g-email').value = ''
+        document.getElementById('g-phone').value = ''
+        await loadAll()
+    } catch (error) {
+        msg.className   = 'error'
+        msg.textContent = error.message
+    } finally {
+        btn.disabled    = false
+        btn.textContent = 'Registrar'
+    }
+    })
 
     loadAll()
 }
