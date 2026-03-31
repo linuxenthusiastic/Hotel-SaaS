@@ -85,36 +85,7 @@ config/         → database.js, container.js
 ---
 
 ## Modelo de base de datos
-```
-guests               rooms
-├── id PK            ├── id PK
-├── full_name        ├── number
-├── document_number  ├── type
-├── email            ├── capacity
-├── phone            ├── price_per_night
-└── created_at       └── is_active
-
-reservations
-├── id PK
-├── guest_id FK → guests
-├── room_id  FK → rooms
-├── check_in_date
-├── check_out_date
-├── status (CONFIRMED | CHECKED_IN | CHECKED_OUT | CANCELLED)
-├── total_amount
-├── penalty_amount
-└── created_at
-
-checkin_checkout          hotel_services
-├── id PK                 ├── id PK
-├── reservation_id FK     ├── name
-├── actual_checkin        ├── category
-├── actual_checkout       ├── phone
-├── late_checkout         ├── description
-├── late_fee              └── available
-└── notes
-```
-
+![image](https://github.com/linuxenthusiastic/Hotel-SaaS/blob/main/db-model/ModeloBaseDeDatos.png)
 ---
 
 ## Patrones de diseño implementados
