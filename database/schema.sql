@@ -49,3 +49,11 @@ CREATE TABLE IF NOT EXISTS hotel_services (
   description TEXT,
   available   INTEGER DEFAULT 1
 );
+
+CREATE TABLE IF NOT EXISTS room_types (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  type        TEXT    NOT NULL UNIQUE,
+  capacity    INTEGER NOT NULL,
+  description TEXT    NOT NULL,
+  base_price  REAL    NOT NULL
+);

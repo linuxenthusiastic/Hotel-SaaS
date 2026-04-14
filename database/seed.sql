@@ -46,3 +46,9 @@ INSERT INTO reservations (guest_id, room_id, check_in_date, check_out_date, stat
 
 INSERT INTO checkin_checkout (reservation_id, actual_checkin, late_checkout, late_fee) VALUES
   (3, '2026-04-01 14:30:00', 0, 0);
+
+INSERT INTO room_types (type, capacity, description, base_price) VALUES
+  ('Simple',            1, 'Habitacion individual, una cama',          55.00),
+  ('Doble',             2, 'Habitacion doble, dos camas individuales',  85.00),
+  ('Doble matrimonial', 2, 'Habitacion doble, cama matrimonial',        95.00),
+  ('Suite',             3, 'Suite de lujo, sala y dormitorio',         160.00);
