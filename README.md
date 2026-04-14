@@ -16,9 +16,12 @@ Prototipo académico de gestión de reservas, check-in, check-out y servicios de
 - Node.js v18+
 - Git
 
+```
+git clone https://github.com/linuxenthusiastic/Hotel-SaaS.git
+cd Hotel-SaaS
+```
 ### Backend
 ```bash
-cd Hotel-SaaS-Backend
 npm install
 npm run dev
 ```
@@ -33,7 +36,7 @@ El servidor corre en `http://localhost:3000`
 
 ### Frontend
 ```bash
-cd Hotel-SaaS-Frontend/frontend
+cd frontend
 npm install
 npm run dev
 ```
