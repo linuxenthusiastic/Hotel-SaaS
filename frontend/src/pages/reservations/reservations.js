@@ -53,15 +53,14 @@ export async function renderReservations(container) {
   document.getElementById('r-checkin').min  = today
   document.getElementById('r-checkout').min = today
 
-  // Carga los tipos de habitacion desde el Strategy
   async function loadTypes() {
     try {
       const types  = await api.get('/rooms/types')
       const select = document.getElementById('r-type')
       types.forEach(t => {
         const opt = document.createElement('option')
-        opt.value       = t
-        opt.textContent = t
+        opt.value       = t.type
+        opt.textContent = t.type
         select.appendChild(opt)
       })
     } catch (error) {
@@ -69,7 +68,6 @@ export async function renderReservations(container) {
     }
   }
 
-  // Cuando el recepcionista elige un tipo muestra las caracteristicas
   document.getElementById('r-type').addEventListener('change', async (e) => {
     const type     = e.target.value
     const infoBox  = document.getElementById('r-type-info')
