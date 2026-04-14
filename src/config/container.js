@@ -5,6 +5,7 @@ import RoomRepository        from '../repositories/RoomRepository.js'
 import ReservationRepository from '../repositories/ReservationRepository.js'
 import CheckinRepository     from '../repositories/CheckinRepository.js'
 import HotelServiceRepository from '../repositories/HotelServiceRepository.js'
+import RoomTypeRepository from '../repositories/RoomTypeRepository.js'
 
 import GuestService       from '../services/GuestService.js'
 import RoomService        from '../services/RoomService.js'
@@ -25,9 +26,10 @@ const roomRepo        = new RoomRepository(db)
 const reservationRepo = new ReservationRepository(db)
 const checkinRepo     = new CheckinRepository(db)
 const hotelServiceRepo = new HotelServiceRepository(db)
+const roomTypeRepo = new RoomTypeRepository(db)
 
 const guestService       = new GuestService(guestRepo)
-const roomService        = new RoomService(roomRepo)
+const roomService        = new RoomService(roomRepo,roomTypeRepo)
 const reservationService = new ReservationService(reservationRepo, roomRepo, guestRepo)
 const checkinService     = new CheckinService(checkinRepo, reservationRepo)
 const checkoutService    = new CheckoutService(checkinRepo, reservationRepo)

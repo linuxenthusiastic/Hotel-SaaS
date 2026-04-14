@@ -4,11 +4,11 @@ class RoomController {
     }
     availableRooms(req,res){
         try{
-            const {checkIn , checkOut} = req.query;
+            const {checkIn , checkOut , type} = req.query;
             if(!checkIn || !checkOut){
                 return res.status(400).json({ error: 'Las fechas son obligatorias' }) 
             }
-            const rooms = this.RoomService.availableRooms(checkIn,checkOut)
+            const rooms = this.RoomService.availableRooms(checkIn,checkOut , type || null)
             res.json(rooms)
         } catch(error) {
             res.status(400).json({ error: error.message })
