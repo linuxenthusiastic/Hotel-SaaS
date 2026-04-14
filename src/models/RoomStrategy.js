@@ -1,44 +1,37 @@
-class SimpleStrategy {
-    get type()        { return 'Simple' }
-    get capacity()    { return 1 }
-    get description() { return 'Habitacion individual, una cama' }
-    get basePrice()   { return 50 }
+class RoomTypeStrategy {
+    constructor(roomType) {
+        this.roomType = roomType
     }
 
-    class DobleStrategy {
-    get type()        { return 'Doble' }
-    get capacity()    { return 2 }
-    get description() { return 'Habitacion doble, dos camas individuales' }
-    get basePrice()   { return 80 }
+    get type()        { return this.roomType.type }
+    get capacity()    { return this.roomType.capacity }
+    get description() { return this.roomType.description }
+    get basePrice()   { return this.roomType.base_price }
+
+    calculatePrice(nights) {
+      return nights * this.basePrice
     }
 
-    class DobleMatrimonialStrategy {
-    get type()        { return 'Doble matrimonial' }
-    get capacity()    { return 2 }
-    get description() { return 'Habitacion doble, cama matrimonial' }
-    get basePrice()   { return 90 }
-}
-
-    class SuiteStrategy {
-    get type()        { return 'Suite' }
-    get capacity()    { return 3 }
-    get description() { return 'Suite de lujo, sala y dormitorio' }
-    get basePrice()   { return 150 }
-}
-
-    const strategies = {
-    'Simple':            new SimpleStrategy(),
-    'Doble':             new DobleStrategy(),
-    'Doble matrimonial': new DobleMatrimonialStrategy(),
-    'Suite':             new SuiteStrategy(),
-}
-
-    export function getRoomStrategy(type) {
-    const strategy = strategies[type]
-    if (!strategy) {
-        throw new Error(`Tipo no valido: ${type}. Opciones: ${Object.keys(strategies).join(', ')}`)
+    validate() {
+        if (!this.roomType) {
+        throw new Error('Tipo de habitacion no valido')
+        }
+        return true
     }
-    return strategy
-}
 
-export const roomTypes = Object.keys(strategies)
+    toJSON() {
+        return {
+        type:        this.type,
+        capacity:    this.capacity,
+        description: this.description,
+        basePrice:   this.basePrice,
+        }
+    }
+    }
+
+    export function getRoomStrategy(roomType) {
+    if (!roomType) {
+        throw new Error('Tipo de habitacion no encontrado')
+    }
+    return new RoomTypeStrategy(roomType)
+    }

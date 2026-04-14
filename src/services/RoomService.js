@@ -1,37 +1,40 @@
-
-import { getRoomStrategy, roomTypes } from '../models/RoomStrategy.js'
+import { getRoomStrategy } from '../models/RoomStrategy.js'
 
 class RoomService {
-    constructor(RoomRepository){
-        this.RoomRepository = RoomRepository;
-    }
-    availableRooms(checkInDate,checkOutDate){
-        const rooms = this.RoomRepository.findAvailable(checkInDate,checkOutDate);
-
-        if(!rooms || rooms.length === 0) {
-            throw new Error(`No hay habitaciones disponibles en esas fechas`);
-        }
-
-        return rooms;
+    constructor(roomRepository, roomTypeRepository) {
+    this.roomRepository     = roomRepository
+    this.roomTypeRepository = roomTypeRepository
     }
 
-    getAll(){
-        return this.RoomRepository.findAll();
+    getAll() {
+    return this.roomRepository.findAll()
     }
 
-    getRoomTypes(){
-        return roomTypes;
+    getRoomTypes() {
+    return this.roomTypeRepository.findAll()
     }
 
     applyStrategy(type) {
-        const strategy = getRoomStrategy(type)
-        return {
-            type:        strategy.type,
-            capacity:    strategy.capacity,
-            description: strategy.description,
-            basePrice:   strategy.basePrice,
-        }
+    const roomType = this.roomTypeRepository.findByType(type)
+    if (!roomType) {
+        throw new Error(`Tipo no valido: ${type}`)
+    }
+    const strategy = getRoomStrategy(roomType)
+    return strategy.toJSON()
+    }
+
+    availableRooms(checkIn, checkOut, type = null) {
+    if (type) {
+        const roomType = this.roomTypeRepository.findByType(type)
+        if (!roomType) throw new Error(`Tipo no valido: ${type}`)
+        getRoomStrategy(roomType).validate()
+    }
+    const rooms = this.roomRepository.findAvailable(checkIn, checkOut, type)
+    if (!rooms || rooms.length === 0) {
+        throw new Error('No hay habitaciones disponibles en esas fechas')
+    }
+    return rooms
     }
 }
 
-export default RoomService;
+export default RoomService
